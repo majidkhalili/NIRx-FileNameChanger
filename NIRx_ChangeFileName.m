@@ -1,4 +1,8 @@
 function NIRx_ChangeFileName(pathRootFolder,newFileName)
+% Renameing the NIRS file recorded by NIRx
+% pathRootFolder : path to the data folder 
+% newFileName    : new file name.
+% Author: Majid (majidkhalili89@aim.com)
 
 %% Loading the Input File
     
