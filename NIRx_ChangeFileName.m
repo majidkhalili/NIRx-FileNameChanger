@@ -4,7 +4,7 @@ function NIRx_ChangeFileName(pathRootFolder,newFileName)
 % newFileName    : new file name.
 % Author: Majid (majidkhalili89@aim.com)
 
-%% Loading the Input File
+% Loading the Input File
     
     % check if the path is empty get the new path
     if ~exist('pathRootFolder', 'var') || ~exist(pathRootFolder, 'dir')
@@ -25,7 +25,7 @@ function NIRx_ChangeFileName(pathRootFolder,newFileName)
         error('The selected folder does not contain any NIRS config file.');
         return;
     end
-%% Getting new file name
+% Getting new file name
     if ~exist('newFileName', 'var')
         newFileName = string(inputdlg('New File Name:'));
         if isempty(newFileName)
@@ -44,41 +44,39 @@ function NIRx_ChangeFileName(pathRootFolder,newFileName)
         return;
     end
 
-%% Writing new files
+% Writing new files
+    oldFileName = extractBefore(configFile, '_config.txt');
+    for i = 1 : numel(allFiles)
+        tmpNewFile = {};
+        linenumber = 0;
+        if allFiles(i).isdir == 0
 
-oldFileName = extractBefore(configFile, '_config.txt');
-for i = 1 : numel(allFiles)
-    tmpNewFile = {};
-    linenumber = 0;
-    if allFiles(i).isdir == 0
-        
-        tmpnewfilename = strrep(allFiles(i).name, oldFileName, newFileName);
-        
-        % Check if it is not mat file read it line by line
-        if ~contains(allFiles(i).name, '.mat')
-            fid = fopen(fullfile(allFiles(i).folder, allFiles(i).name));
-            tline  = fgetl(fid);
-            ntline = strrep(tline, oldFileName, newFileName);
-            linenumber = linenumber + 1;
-            tmpNewFile{linenumber} = ntline;
+            tmpnewfilename = strrep(allFiles(i).name, oldFileName, newFileName);
 
-            while ischar(tline)
-                tline = fgetl(fid);
+            % Check if it is not mat file read it line by line
+            if ~contains(allFiles(i).name, '.mat')
+                fid = fopen(fullfile(allFiles(i).folder, allFiles(i).name));
+                tline  = fgetl(fid);
                 ntline = strrep(tline, oldFileName, newFileName);
                 linenumber = linenumber + 1;
                 tmpNewFile{linenumber} = ntline;
-            end
-            fclose(fid);
 
-            % Write to new file
-            fid = fopen(fullfile(pathNewFiles, tmpnewfilename), 'wt');
-            fprintf(fid, '%s\n', tmpNewFile{:});
-            fclose(fid);
-        else
-            disp(allFiles(i).name);
+                while ischar(tline)
+                    tline = fgetl(fid);
+                    ntline = strrep(tline, oldFileName, newFileName);
+                    linenumber = linenumber + 1;
+                    tmpNewFile{linenumber} = ntline;
+                end
+                fclose(fid);
+
+                % Write to new file
+                fid = fopen(fullfile(pathNewFiles, tmpnewfilename), 'wt');
+                fprintf(fid, '%s\n', tmpNewFile{:});
+                fclose(fid);
+            else
+                disp(allFiles(i).name);
+            end
         end
     end
-end
-
 
 end
